@@ -19,9 +19,7 @@
 # SOFTWARE.
 
 import argparse
-
-
-
+import subprocess
 
 def argument_parser() -> argparse.ArgumentParser:
     """
@@ -41,6 +39,14 @@ def argument_parser() -> argparse.ArgumentParser:
                              "be in the VCF file")
     return parser
 
+
+def dwgsim(*args):
+    """
+    Runs `dwgsim` locally with specified args.
+    :param args:
+    :return:
+    """
+    subprocess.run(["dwgsim"] + list(args))
 
 
 def main():
