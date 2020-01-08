@@ -20,8 +20,17 @@
 
 import argparse
 import subprocess
+from typing import NamedTuple
 
+from Bio.Seq import Seq
 from Bio.SeqIO.FastaIO import FastaIterator
+
+
+class Mutation(NamedTuple):
+    contig: str
+    start: int
+    end: int
+    sequence: str
 
 
 def argument_parser() -> argparse.ArgumentParser:
