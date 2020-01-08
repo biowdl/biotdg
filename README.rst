@@ -1,2 +1,4 @@
-# biotdg
+biotdg
+======
+
 Bioinformatics Test Data Generator
