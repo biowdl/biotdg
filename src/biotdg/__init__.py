@@ -18,3 +18,34 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import argparse
+
+
+
+
+def argument_parser() -> argparse.ArgumentParser:
+    """
+    Creates the argument parser for biotdg
+    :return: a parser object
+    """
+    parser = argparse.ArgumentParser(
+        description="Bioinformatics Test Data Generator")
+    parser.add_argument("--vcf", required=True,
+                        help="VCF file with mutations.")
+    parser.add_argument("-p", "--ploidy-table", required=True,
+                        help="Tab-delimited file with two columns specifying "
+                             "the chromosome name and its ploidity. By "
+                             "default all chromosomes have a ploidity of 2")
+    parser.add_argument("-s", "--sample-name", required=True,
+                        help="name of the sample to generate. The sample must "
+                             "be in the VCF file")
+    return parser
+
+
+
+def main():
+    args = argument_parser().parse_args()
+
+
+if __name__ == "__main__":
+    main()
