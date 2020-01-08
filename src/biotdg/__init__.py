@@ -21,6 +21,9 @@
 import argparse
 import subprocess
 
+from Bio.SeqIO.FastaIO import FastaIterator
+
+
 def argument_parser() -> argparse.ArgumentParser:
     """
     Creates the argument parser for biotdg

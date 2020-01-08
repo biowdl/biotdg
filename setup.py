@@ -50,7 +50,9 @@ setup(
     ],
     python_requires=">=3.5",  # Because of typing
     install_requires=[
-        "biopython"
+        "biopython",
+        "cyvcf2",
+        "pybedtools"
     ],
     entry_points={"console_scripts": [
         "biotdg = biotdg:main"]}
