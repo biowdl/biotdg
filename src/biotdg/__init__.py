@@ -20,18 +20,38 @@
 
 import argparse
 import subprocess
-from typing import NamedTuple
+from typing import Dict, Generator, NamedTuple
 
 from Bio.Seq import Seq
+from Bio import SeqRecord
 from Bio.SeqIO.FastaIO import FastaIterator
 
+import cyvcf2
 
 class Mutation(NamedTuple):
     contig: str
     start: int
     end: int
     sequence: str
+    allele_no: int
 
+
+def vcf_to_mutations(vcf_path: str, sample: str) -> Generator[Mutation, None, None]:
+    vcf = cyvcf2.VCFReader(vcf_path)
+    try:
+        vcf.set_samples([sample])
+        for record in vcf:  # type: cyvcf2.Variant
+            contig = record.CHROM
+            start = record.POS - 1
+            end = start + len(record.REF)
+            for allele_no, sequence in enumerate(record.gt_bases):
+                yield Mutation(contig, start, end, sequence, allele_no)
+    finally:
+        vcf.close()
+
+
+def generate_fake_genome(sample: str, vcf_path: str, ploidities: Dict[str, int]) -> SeqRecord:
+    pass
 
 def argument_parser() -> argparse.ArgumentParser:
     """
