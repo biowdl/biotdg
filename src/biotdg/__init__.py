@@ -20,23 +20,22 @@
 
 import argparse
 import subprocess
-from typing import Dict, Generator, NamedTuple
+from typing import Dict, Generator, List, NamedTuple
 
 from Bio.Seq import Seq
-from Bio import SeqRecord
+from Bio.SeqRecord import SeqRecord
 from Bio.SeqIO.FastaIO import FastaIterator
 
 import cyvcf2
 
 class Mutation(NamedTuple):
-    contig: str
     start: int
     end: int
     sequence: str
-    allele_no: int
 
 
-def vcf_to_mutations(vcf_path: str, sample: str) -> Generator[Mutation, None, None]:
+def vcf_to_mutations(vcf_path: str, sample: str) -> Dict[str, Dict[int, List[Mutation]]]:
+    mutations_dict = {}
     vcf = cyvcf2.VCFReader(vcf_path)
     try:
         vcf.set_samples([sample])
@@ -44,13 +43,52 @@ def vcf_to_mutations(vcf_path: str, sample: str) -> Generator[Mutation, None, No
             contig = record.CHROM
             start = record.POS - 1
             end = start + len(record.REF)
+            if not contig in mutations_dict:
+                mutations_dict[contig] = {}
             for allele_no, sequence in enumerate(record.gt_bases):
-                yield Mutation(contig, start, end, sequence, allele_no)
+                mutation = Mutation(start, end, sequence)
+                try:
+                    mutations_dict[contig][allele_no].append(mutation)
+                except KeyError:
+                    mutations_dict[contig][allele_no] = [mutation]
     finally:
         vcf.close()
 
+    return mutations_dict
 
-def generate_fake_genome(sample: str, vcf_path: str, ploidities: Dict[str, int]) -> SeqRecord:
+
+def sequence_with_mutations(sequence: str, mutations: List[Mutation]) -> str:
+    # Sort mutations by position
+    mutations.sort()
+    new_sequence = []
+    start = 0
+
+    # This implementation is wrong for overlapping mutations.
+    # TODO: Make sure this is documented
+    for mutation in mutations:
+        new_sequence.append(sequence[start: mutation.start])
+        new_sequence.append(mutation.sequence)
+        start = mutation.end
+    new_sequence.append(sequence[start:])
+    return "".join(new_sequence)
+
+
+def generate_fake_genome(sample: str, reference: str, vcf_path: str, ploidities: Dict[str, int]) -> Generator[SeqRecord, None, None]:
+    mutations_dict = vcf_to_mutations(vcf_path, sample)
+    with open(reference, "r") as reference_h:
+        for seqrecord in FastaIterator(reference_h):
+            ploidity = ploidities.get(seqrecord.id, 2)
+            for allele_no in range(ploidity):
+                new_sequence = sequence_with_mutations(str(seqrecord.seq), mutations_dict[seqrecord.id][allele_no])
+                new_id = seqrecord.id + "_" + str(allele_no)
+                yield SeqRecord(
+                    Seq(new_sequence, seqrecord.seq.alphabet),
+                    id=new_id,
+                    name=new_id,
+                    description=new_id)
+
+
+def write_fasta(seqrecords: Iterable[SeqRecord], filename):
     pass
 
 def argument_parser() -> argparse.ArgumentParser:
