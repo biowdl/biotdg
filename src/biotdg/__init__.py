@@ -20,7 +20,8 @@
 
 import argparse
 import subprocess
-from typing import Dict, Generator, List, NamedTuple
+from pathlib import Path
+from typing import Dict, Generator, Iterable, List, NamedTuple
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -73,9 +74,13 @@ def sequence_with_mutations(sequence: str, mutations: List[Mutation]) -> str:
     return "".join(new_sequence)
 
 
-def generate_fake_genome(sample: str, reference: str, vcf_path: str, ploidities: Dict[str, int]) -> Generator[SeqRecord, None, None]:
+def generate_fake_genome(sample: str,
+                         reference: Path,
+                         vcf_path: str,
+                         ploidities: Dict[str, int]
+                         ) -> Generator[SeqRecord, None, None]:
     mutations_dict = vcf_to_mutations(vcf_path, sample)
-    with open(reference, "r") as reference_h:
+    with reference.open("rt") as reference_h:
         for seqrecord in FastaIterator(reference_h):
             ploidity = ploidities.get(seqrecord.id, 2)
             for allele_no in range(ploidity):
@@ -88,8 +93,39 @@ def generate_fake_genome(sample: str, reference: str, vcf_path: str, ploidities:
                     description=new_id)
 
 
-def write_fasta(seqrecords: Iterable[SeqRecord], filename):
-    pass
+def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
+    filepath.parent.mkdir(parents=True)
+    with filepath.open("wt") as file_h:
+        for record in seqrecords:
+            file_h.write(record.format("fasta"))
+    return filepath
+
+
+def dwgsim(*args):
+    """
+    Runs `dwgsim` locally with specified args.
+    :param args:
+    :return:
+    """
+    subprocess.run(["dwgsim"] + list(args))
+
+
+def ploidity_file_to_dict(ploidity_file: Path) -> Dict[str, int]:
+    ploidity_dict = dict()
+    with ploidity_file.open("r") as file_h:
+        for line in file_h:
+            chromosome, ploidity = line.strip().split("\t")
+            ploidity_dict[chromosome] = int(ploidity)
+    return ploidity_dict
+
+
+def generate_test_data(sample: str,
+                       reference: Path,
+                       vcf_path: str,
+                       ploidity_file: Path,
+                         ) -> Generator[SeqRecord, None, None]
+
+
 
 def argument_parser() -> argparse.ArgumentParser:
     """
@@ -107,16 +143,9 @@ def argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("-s", "--sample-name", required=True,
                         help="name of the sample to generate. The sample must "
                              "be in the VCF file")
+    parser.add_argument("-o", "--output-dir", type=str)
     return parser
 
-
-def dwgsim(*args):
-    """
-    Runs `dwgsim` locally with specified args.
-    :param args:
-    :return:
-    """
-    subprocess.run(["dwgsim"] + list(args))
 
 
 def main():
