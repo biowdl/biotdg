@@ -84,7 +84,9 @@ def generate_fake_genome(sample: str,
         for seqrecord in FastaIterator(reference_h):
             ploidity = ploidities.get(seqrecord.id, 2)
             for allele_no in range(ploidity):
-                new_sequence = sequence_with_mutations(str(seqrecord.seq), mutations_dict[seqrecord.id][allele_no])
+                new_sequence = sequence_with_mutations(
+                    sequence=str(seqrecord.seq),
+                    mutations=mutations_dict[seqrecord.id][allele_no])
                 new_id = seqrecord.id + "_" + str(allele_no)
                 yield SeqRecord(
                     Seq(new_sequence, seqrecord.seq.alphabet),
@@ -123,7 +125,12 @@ def generate_test_data(sample: str,
                        reference: Path,
                        vcf_path: str,
                        ploidity_file: Path,
-                         ) -> Generator[SeqRecord, None, None]
+                       output_dir: Path):
+    output_dir.mkdir(parents=True)
+    generated_genome = generate_fake_genome(
+        sample, reference, vcf_path, ploidity_file_to_dict(ploidity_file))
+    write_fasta(generated_genome, Path(output_dir, sample + ".fasta"))
+    dwgsim("-r", "0")
 
 
 
