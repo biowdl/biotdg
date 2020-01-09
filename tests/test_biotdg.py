@@ -20,7 +20,7 @@
 
 from pathlib import Path
 
-from biotdg import Mutation, vcf_to_mutations
+from biotdg import Mutation, sequence_with_mutations, vcf_to_mutations
 
 TEST_DATA = Path(__file__).parent / Path("data")
 
@@ -45,3 +45,12 @@ def test_vcf_to_mutations():
     }
     result_dict = vcf_to_mutations(str(vcf), "wgs2")
     assert vcf_mut_dict == result_dict
+
+
+def test_sequence_with_mutations():
+    # Function does not test if sequence is DNA, so we can use numbers and
+    # symbols for easy testing.
+    mutations = [Mutation(5, 6, "_"), Mutation(8, 9, "=")]
+    sequence = "0123456789"
+    mutated_seq = sequence_with_mutations(sequence, mutations)
+    assert mutated_seq == "01234_67=9"
