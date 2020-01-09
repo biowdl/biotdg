@@ -113,8 +113,22 @@ def test_write_fasta():
 
 
 def test_dwgsim():
+    """
+    Test if files are properly generated. Also test if mutation rate of
+    0.0 does not generate mutations.
+    """
     tempdir = Path(tempfile.mkdtemp())
     prefix = str(Path(tempdir, "bla"))
-    reference = TEST_DATA / Path("reference.fasta")
-    dwgsim(in_ref_fa=str(reference), out_prefix=prefix)
+    reference = TEST_DATA / Path("a.fasta")
+    dwgsim(in_ref_fa=str(reference), out_prefix=prefix, mutation_rate=0.0)
+    generated_files = os.listdir(str(tempdir))
+    assert "bla.bwa.read1.fastq" in generated_files
+    assert "bla.bwa.read2.fastq" in generated_files
+    mutations_txt = tempdir / Path("bla.mutations.txt")
+    assert mutations_txt.read_text() == ""
+    # Manual testing was performed: A mutation rate of 0.1 does produce a
+    # mutations.txt file with contents.
+    # Despite having a mutation rate of 0.0, there are still read errors.
+    # This is easily verified as this reference only contains A's
+    # This means dwgsim is used in a valid way in this program.
     shutil.rmtree(str(tempdir))
