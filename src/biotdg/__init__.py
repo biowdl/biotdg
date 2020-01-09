@@ -107,7 +107,8 @@ def generate_fake_genome(sample: str,
 
 
 def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
-    filepath.parent.mkdir(parents=True)
+    if not filepath.parent.exists():
+        filepath.parent.mkdir(parents=True)
     with filepath.open("wt") as file_h:
         for record in seqrecords:
             file_h.write(record.format("fasta"))
@@ -124,23 +125,23 @@ def dwgsim(*args,
            mutation_rate: Optional[float] = None,
            probability_random_dna_read: Optional[float] = None,
            random_seed: Optional[int] = None):
-    args = list(args)
+    argslist = list(args)
     if per_base_error_rate_read1 is not None:
-        args.extend(["-e", str(per_base_error_rate_read1)])
+        argslist.extend(["-e", str(per_base_error_rate_read1)])
     if per_base_error_rate_read2 is not None:
-        args.extend(["-E", str(per_base_error_rate_read2)])
+        argslist.extend(["-E", str(per_base_error_rate_read2)])
     if length_read1 is not None:
-        args.extend(["-1", str(length_read1)])
+        argslist.extend(["-1", str(length_read1)])
     if length_read2 is not None:
-        args.extend(["-2", str(length_read2)])
+        argslist.extend(["-2", str(length_read2)])
     if mutation_rate is not None:
-        args.extend(["-r", str(mutation_rate)])
+        argslist.extend(["-r", str(mutation_rate)])
     if probability_random_dna_read is not None:
-        args.extend(["-y", str(probability_random_dna_read)])
+        argslist.extend(["-y", str(probability_random_dna_read)])
     if random_seed is not None:
-        args.extend(["-z", str(random_seed)])
-    args.extend([in_ref_fa, out_prefix])
-    subprocess.run(["dwgsim"] + list(args))
+        argslist.extend(["-z", str(random_seed)])
+    argslist.extend([in_ref_fa, out_prefix])
+    subprocess.run(["dwgsim"] + list(argslist))
 
 
 def ploidity_file_to_dict(ploidity_file: Path) -> Dict[str, int]:

@@ -18,13 +18,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 import shutil
-import time
 import tempfile
 from pathlib import Path
 
+from Bio.Seq import Seq
+from Bio.SeqRecord import SeqRecord
+
 from biotdg import (Mutation, dwgsim, generate_fake_genome,
-                    sequence_with_mutations, vcf_to_mutations)
+                    sequence_with_mutations, vcf_to_mutations, write_fasta)
 
 TEST_DATA = Path(__file__).parent / Path("data")
 
@@ -96,6 +99,18 @@ def test_generate_fake_genome_with_mutations():
         ("chrX_1", "TGTCAGTCAGTC"),
         ("chrY_0", "AGACTC"),
     ]
+
+
+def test_write_fasta():
+    _, tmppath = tempfile.mkstemp()
+
+    tmpfile = Path(tmppath)
+    seqrecords = [SeqRecord(Seq("AAAAA"), "chr1", description=""),
+                  SeqRecord(Seq("TTTTT"), "chr2", description="")]
+    write_fasta(seqrecords, tmpfile)
+    assert tmpfile.read_text() == ">chr1\nAAAAA\n>chr2\nTTTTT\n"
+    os.remove(str(tmpfile))
+
 
 def test_dwgsim():
     tempdir = Path(tempfile.mkdtemp())
