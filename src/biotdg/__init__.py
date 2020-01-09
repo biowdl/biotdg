@@ -76,10 +76,10 @@ def sequence_with_mutations(sequence: str, mutations: List[Mutation]) -> str:
 
 def generate_fake_genome(sample: str,
                          reference: Path,
-                         vcf_path: str,
+                         vcf_path: Path,
                          ploidities: Dict[str, int]
                          ) -> Generator[SeqRecord, None, None]:
-    mutations_dict = vcf_to_mutations(vcf_path, sample)
+    mutations_dict = vcf_to_mutations(str(vcf_path), sample)
     with reference.open("rt") as reference_h:
         for seqrecord in FastaIterator(reference_h):
             ploidity = ploidities.get(seqrecord.id, 2)
@@ -109,7 +109,10 @@ def dwgsim(in_ref_fa: str,
            per_base_error_rate_read2: Optional[float] = None,
            length_read1: Optional[int] = None,
            length_read2: Optional[int] = None,
-           mutation_rate: Optional[float] = None):
+           mutation_rate: Optional[float] = None,
+           probability_random_dna_read: Optional[float] = None,
+           random_seed: Optional[int] = None):
+
     """
     Runs `dwgsim` locally with specified args.
     :param args:
@@ -125,7 +128,11 @@ def dwgsim(in_ref_fa: str,
     if length_read2 is not None:
         args.extend(["-2", str(length_read2)])
     if mutation_rate is not None:
-        args.extend([])
+        args.extend(["-r", str(mutation_rate)])
+    if probability_random_dna_read is not None:
+        args.extend(["-y", str(probability_random_dna_read)])
+    if random_seed is not None:
+        args.extend(["-z", str(random_seed)])
     args.extend([in_ref_fa, out_prefix])
     subprocess.run(["dwgsim"] + list(args))
 
@@ -141,13 +148,21 @@ def ploidity_file_to_dict(ploidity_file: Path) -> Dict[str, int]:
 
 def generate_test_data(sample: str,
                        reference: Path,
-                       vcf_path: str,
+                       vcf_path: Path,
                        ploidity_file: Path,
-                       output_dir: Path):
+                       output_dir: Path,
+                       random_seed: int):
     output_dir.mkdir(parents=True)
     generated_genome = generate_fake_genome(
         sample, reference, vcf_path, ploidity_file_to_dict(ploidity_file))
-    write_fasta(generated_genome, Path(output_dir, sample + ".fasta"))
+
+    generated_genome_path = Path(output_dir, sample + ".fasta")
+    write_fasta(generated_genome, generated_genome_path)
+    dwgsim(in_ref_fa=str(generated_genome_path),
+           out_prefix=str(Path(output_dir, sample)),
+           mutation_rate=0.0,
+           random_seed=random_seed
+           )
 
 
 
@@ -158,22 +173,33 @@ def argument_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(
         description="Bioinformatics Test Data Generator")
+    parser.add_argument("-r", "--reference", type=Path, required=True,
+                        help="Reference genome for the sample.")
     parser.add_argument("--vcf", required=True,
                         help="VCF file with mutations.")
-    parser.add_argument("-p", "--ploidy-table", required=True,
+    parser.add_argument("-p", "--ploidy-table", type=Path, required=True,
                         help="Tab-delimited file with two columns specifying "
                              "the chromosome name and its ploidity. By "
                              "default all chromosomes have a ploidity of 2")
-    parser.add_argument("-s", "--sample-name", required=True,
+    parser.add_argument("-s", "--sample-name", type=str, required=True,
                         help="name of the sample to generate. The sample must "
                              "be in the VCF file")
-    parser.add_argument("-o", "--output-dir", type=str)
+    parser.add_argument("-z", "--random-seed", type=int, default=1,
+                        help="random seed for dwgsim (default: 1)")
+    parser.add_argument("-o", "--output-dir", type=Path)
     return parser
 
 
 
 def main():
     args = argument_parser().parse_args()
+    generate_test_data(sample=args.sample_name,
+                       reference=args.reference,
+                       vcf_path=args.vcf,
+                       ploidity_file=args.ploidity_table,
+                       output_dir=args.output_dir,
+                       random_seed=args.random_seed
+                       )
 
 
 if __name__ == "__main__":
