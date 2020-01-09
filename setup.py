@@ -52,7 +52,6 @@ setup(
     install_requires=[
         "biopython",
         "cyvcf2",
-        "pybedtools"
     ],
     entry_points={"console_scripts": [
         "biotdg = biotdg:main"]}
