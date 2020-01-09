@@ -114,7 +114,8 @@ def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
     return filepath
 
 
-def dwgsim(in_ref_fa: str,
+def dwgsim(*args,
+           in_ref_fa: str,
            out_prefix: str,
            per_base_error_rate_read1: Optional[float] = None,
            per_base_error_rate_read2: Optional[float] = None,
@@ -123,7 +124,7 @@ def dwgsim(in_ref_fa: str,
            mutation_rate: Optional[float] = None,
            probability_random_dna_read: Optional[float] = None,
            random_seed: Optional[int] = None):
-    args = []
+    args = list(args)
     if per_base_error_rate_read1 is not None:
         args.extend(["-e", str(per_base_error_rate_read1)])
     if per_base_error_rate_read2 is not None:

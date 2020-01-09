@@ -18,10 +18,13 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import shutil
+import time
+import tempfile
 from pathlib import Path
 
-from biotdg import Mutation, generate_fake_genome, sequence_with_mutations, \
-    vcf_to_mutations
+from biotdg import (Mutation, dwgsim, generate_fake_genome,
+                    sequence_with_mutations, vcf_to_mutations)
 
 TEST_DATA = Path(__file__).parent / Path("data")
 
@@ -93,3 +96,10 @@ def test_generate_fake_genome_with_mutations():
         ("chrX_1", "TGTCAGTCAGTC"),
         ("chrY_0", "AGACTC"),
     ]
+
+def test_dwgsim():
+    tempdir = Path(tempfile.mkdtemp())
+    prefix = str(Path(tempdir, "bla"))
+    reference = TEST_DATA / Path("reference.fasta")
+    dwgsim(in_ref_fa=str(reference), out_prefix=prefix)
+    shutil.rmtree(str(tempdir))
