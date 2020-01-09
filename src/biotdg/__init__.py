@@ -92,9 +92,12 @@ def generate_fake_genome(sample: str,
         for seqrecord in FastaIterator(reference_h):
             ploidity = ploidities.get(seqrecord.id, 2)
             for allele_no in range(ploidity):
+                # Default to empty list if no mutations were listed.
+                mutations = mutations_dict.get(seqrecord.id, {}
+                                               ).get(allele_no, [])
                 new_sequence = sequence_with_mutations(
                     sequence=str(seqrecord.seq),
-                    mutations=mutations_dict[seqrecord.id][allele_no])
+                    mutations=mutations)
                 new_id = seqrecord.id + "_" + str(allele_no)
                 yield SeqRecord(
                     Seq(new_sequence, seqrecord.seq.alphabet),

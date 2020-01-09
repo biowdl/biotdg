@@ -20,7 +20,8 @@
 
 from pathlib import Path
 
-from biotdg import Mutation, sequence_with_mutations, vcf_to_mutations
+from biotdg import Mutation, generate_fake_genome, sequence_with_mutations, \
+    vcf_to_mutations
 
 TEST_DATA = Path(__file__).parent / Path("data")
 
@@ -54,3 +55,26 @@ def test_sequence_with_mutations():
     sequence = "0123456789"
     mutated_seq = sequence_with_mutations(sequence, mutations)
     assert mutated_seq == "01234_67=9"
+
+
+def test_generate_fake_genome():
+    reference = TEST_DATA / Path("reference.fasta")
+    vcf = TEST_DATA / Path("empty.vcf")
+    ploidities = {"chr1": 3, "chrX": 2, "chrY": 1}
+    sequences = (generate_fake_genome("sample1",
+                                          reference,
+                                          vcf,
+                                          ploidities))
+    ids_and_seqs = [(record.id, str(record.seq)) for record in sequences]
+    assert ids_and_seqs == [
+        ("chr1_0", "GATTACAGATTACAGATTACA"),
+        ("chr1_1", "GATTACAGATTACAGATTACA"),
+        ("chr1_2", "GATTACAGATTACAGATTACA"),
+        ("chrX_0", "AGTCAGTCAGTC"),
+        ("chrX_1", "AGTCAGTCAGTC"),
+        ("chrY_0", "AGAATC"),
+    ]
+
+
+def test_generate_fake_genome_with_mutations():
+    pass
