@@ -38,18 +38,24 @@ class Mutation(NamedTuple):
 
 def vcf_to_mutations(vcf_path: str, sample: str
                      ) -> Dict[str, Dict[int, List[Mutation]]]:
-    mutations_dict = {}
+    mutations_dict: Dict[str, Dict[int, List[Mutation]]] = {}
     vcf = cyvcf2.VCFReader(vcf_path)
     try:
         vcf.set_samples([sample])
         for record in vcf:  # type: cyvcf2.Variant
             contig = record.CHROM
-            start = record.POS - 1
-            end = start + len(record.REF)
-            if contig not in mutations_dict:
+            start = record.start
+            end = record.end
+            genotypes = [record.REF] + record.ALT
+            # We take the genotypes from the first sample. Because there is
+            # only one sample. We take all genotypes except the last column
+            # because that is a boolean that indicates if it is phased or not.
+            genotype_indexes = record.genotypes[0][:-1]
+            if contig not in mutations_dict.keys():
                 mutations_dict[contig] = {}
-            for allele_no, sequence in enumerate(record.gt_bases):
-                mutation = Mutation(start, end, sequence)
+            # Get all the genotypes without the boolean for phasing
+            for allele_no, genotype_idx in enumerate(genotype_indexes):
+                mutation = Mutation(start, end, genotypes[genotype_idx])
                 try:
                     mutations_dict[contig][allele_no].append(mutation)
                 except KeyError:
