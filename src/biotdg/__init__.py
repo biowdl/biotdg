@@ -21,7 +21,7 @@
 import argparse
 import subprocess
 from pathlib import Path
-from typing import Dict, Generator, Iterable, List, NamedTuple
+from typing import Dict, Generator, Iterable, List, NamedTuple, Optional
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
@@ -103,12 +103,30 @@ def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
     return filepath
 
 
-def dwgsim(*args):
+def dwgsim(in_ref_fa: str,
+           out_prefix: str,
+           per_base_error_rate_read1: Optional[float] = None,
+           per_base_error_rate_read2: Optional[float] = None,
+           length_read1: Optional[int] = None,
+           length_read2: Optional[int] = None,
+           mutation_rate: Optional[float] = None):
     """
     Runs `dwgsim` locally with specified args.
     :param args:
     :return:
     """
+    args = []
+    if per_base_error_rate_read1 is not None:
+        args.extend(["-e", str(per_base_error_rate_read1)])
+    if per_base_error_rate_read2 is not None:
+        args.extend(["-E", str(per_base_error_rate_read2)])
+    if length_read1 is not None:
+        args.extend(["-1", str(length_read1)])
+    if length_read2 is not None:
+        args.extend(["-2", str(length_read2)])
+    if mutation_rate is not None:
+        args.extend([])
+    args.extend([in_ref_fa, out_prefix])
     subprocess.run(["dwgsim"] + list(args))
 
 
@@ -130,7 +148,6 @@ def generate_test_data(sample: str,
     generated_genome = generate_fake_genome(
         sample, reference, vcf_path, ploidity_file_to_dict(ploidity_file))
     write_fasta(generated_genome, Path(output_dir, sample + ".fasta"))
-    dwgsim("-r", "0")
 
 
 
