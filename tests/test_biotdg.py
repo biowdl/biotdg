@@ -62,9 +62,9 @@ def test_generate_fake_genome():
     vcf = TEST_DATA / Path("empty.vcf")
     ploidities = {"chr1": 3, "chrX": 2, "chrY": 1}
     sequences = (generate_fake_genome("sample1",
-                                          reference,
-                                          vcf,
-                                          ploidities))
+                                      reference,
+                                      vcf,
+                                      ploidities))
     ids_and_seqs = [(record.id, str(record.seq)) for record in sequences]
     assert ids_and_seqs == [
         ("chr1_0", "GATTACAGATTACAGATTACA"),
@@ -77,4 +77,19 @@ def test_generate_fake_genome():
 
 
 def test_generate_fake_genome_with_mutations():
-    pass
+    reference = TEST_DATA / Path("reference.fasta")
+    vcf = TEST_DATA / Path("sample1.vcf")
+    ploidities = {"chr1": 3, "chrX": 2, "chrY": 1}
+    sequences = (generate_fake_genome("sample1",
+                                      reference,
+                                      vcf,
+                                      ploidities))
+    ids_and_seqs = [(record.id, str(record.seq)) for record in sequences]
+    assert ids_and_seqs == [
+        ("chr1_0", "GATAACAGATTACAGATTACA"),
+        ("chr1_1", "GATCACTGATTACAGATTACA"),
+        ("chr1_2", "GATGACAGATTACAGATTACA"),
+        ("chrX_0", "AGTCAGTCAGTC"),
+        ("chrX_1", "TGTCAGTCAGTC"),
+        ("chrY_0", "AGACTC"),
+    ]
