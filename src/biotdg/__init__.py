@@ -24,10 +24,11 @@ from pathlib import Path
 from typing import Dict, Generator, Iterable, List, NamedTuple, Optional
 
 from Bio.Seq import Seq
-from Bio.SeqRecord import SeqRecord
 from Bio.SeqIO.FastaIO import FastaIterator
+from Bio.SeqRecord import SeqRecord
 
 import cyvcf2
+
 
 class Mutation(NamedTuple):
     start: int
@@ -35,7 +36,8 @@ class Mutation(NamedTuple):
     sequence: str
 
 
-def vcf_to_mutations(vcf_path: str, sample: str) -> Dict[str, Dict[int, List[Mutation]]]:
+def vcf_to_mutations(vcf_path: str, sample: str
+                     ) -> Dict[str, Dict[int, List[Mutation]]]:
     mutations_dict = {}
     vcf = cyvcf2.VCFReader(vcf_path)
     try:
@@ -44,7 +46,7 @@ def vcf_to_mutations(vcf_path: str, sample: str) -> Dict[str, Dict[int, List[Mut
             contig = record.CHROM
             start = record.POS - 1
             end = start + len(record.REF)
-            if not contig in mutations_dict:
+            if contig not in mutations_dict:
                 mutations_dict[contig] = {}
             for allele_no, sequence in enumerate(record.gt_bases):
                 mutation = Mutation(start, end, sequence)
@@ -112,12 +114,6 @@ def dwgsim(in_ref_fa: str,
            mutation_rate: Optional[float] = None,
            probability_random_dna_read: Optional[float] = None,
            random_seed: Optional[int] = None):
-
-    """
-    Runs `dwgsim` locally with specified args.
-    :param args:
-    :return:
-    """
     args = []
     if per_base_error_rate_read1 is not None:
         args.extend(["-e", str(per_base_error_rate_read1)])
@@ -165,7 +161,6 @@ def generate_test_data(sample: str,
            )
 
 
-
 def argument_parser() -> argparse.ArgumentParser:
     """
     Creates the argument parser for biotdg
@@ -188,7 +183,6 @@ def argument_parser() -> argparse.ArgumentParser:
                         help="random seed for dwgsim (default: 1)")
     parser.add_argument("-o", "--output-dir", type=Path)
     return parser
-
 
 
 def main():
