@@ -27,7 +27,8 @@ from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
 from biotdg import (Mutation, dwgsim, generate_fake_genome,
-                    sequence_with_mutations, vcf_to_mutations, write_fasta)
+                    ploidity_file_to_dict, sequence_with_mutations,
+                    vcf_to_mutations, write_fasta)
 
 TEST_DATA = Path(__file__).parent / Path("data")
 
@@ -132,3 +133,12 @@ def test_dwgsim():
     # This is easily verified as this reference only contains A's
     # This means dwgsim is used in a valid way in this program.
     shutil.rmtree(str(tempdir))
+
+
+def test_ploidy_file_to_dict():
+    ploidity_file = TEST_DATA / Path("ploidity_file.tsv")
+    assert ploidity_file_to_dict(ploidity_file) == {
+        "chr1": 3,
+        "chrX": 2,
+        "chrY": 1
+    }
