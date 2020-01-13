@@ -16,8 +16,8 @@
   :target: https://github.com/biowdl/biotdg/blob/master/LICENSE
   :alt:
 
-.. image:: https://travis-ci.org/biowdl/biotdg.svg?branch=develop
-  :target: https://travis-ci.org/biowdl/biotdg
+.. image:: https://travis-ci.com/biowdl/biotdg.svg?branch=develop
+  :target: https://travis-ci.com/biowdl/biotdg
   :alt:
 
 .. image:: https://codecov.io/gh/biowdl/biotdg/branch/develop/graph/badge.svg
