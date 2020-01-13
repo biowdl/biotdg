@@ -123,9 +123,12 @@ def test_dwgsim():
     prefix = str(Path(tempdir, "bla"))
     reference = TEST_DATA / Path("a.fasta")
     dwgsim(in_ref_fa=str(reference), out_prefix=prefix, mutation_rate=0.0,
-           per_base_error_rate_read1=0.001, per_base_error_rate_read2=0.001,
+           per_base_error_rate_read1="0.01,0.0010",
+           per_base_error_rate_read2="0.001,0.01",
            length_read1=150, length_read2=150, random_seed=17,
-           probability_random_dna_read=0.2)
+           probability_random_dna_read=0.2,
+           mean_coverage=100.0,
+           maximum_n_number=10)
     generated_files = os.listdir(str(tempdir))
     assert "bla.bwa.read1.fastq" in generated_files
     assert "bla.bwa.read2.fastq" in generated_files

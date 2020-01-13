@@ -118,12 +118,14 @@ def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
 def dwgsim(*args,
            in_ref_fa: str,
            out_prefix: str,
-           per_base_error_rate_read1: Optional[float] = None,
-           per_base_error_rate_read2: Optional[float] = None,
+           per_base_error_rate_read1: Optional[str] = None,
+           per_base_error_rate_read2: Optional[str] = None,
            length_read1: Optional[int] = None,
            length_read2: Optional[int] = None,
+           mean_coverage: Optional[float] = None,
            mutation_rate: Optional[float] = None,
            probability_random_dna_read: Optional[float] = None,
+           maximum_n_number: Optional[int] = None,
            random_seed: Optional[int] = None):
     argslist = list(args)
     if per_base_error_rate_read1 is not None:
@@ -134,10 +136,14 @@ def dwgsim(*args,
         argslist.extend(["-1", str(length_read1)])
     if length_read2 is not None:
         argslist.extend(["-2", str(length_read2)])
+    if mean_coverage is not None:
+        argslist.extend(["-C", str(mean_coverage)])
     if mutation_rate is not None:
         argslist.extend(["-r", str(mutation_rate)])
     if probability_random_dna_read is not None:
         argslist.extend(["-y", str(probability_random_dna_read)])
+    if maximum_n_number is not None:
+        argslist.extend(["-n", str(maximum_n_number)])
     if random_seed is not None:
         argslist.extend(["-z", str(random_seed)])
     argslist.extend([in_ref_fa, out_prefix])
