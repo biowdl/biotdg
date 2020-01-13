@@ -1,3 +1,29 @@
+.. Badges have empty alts. So nothing shows up if they do not work.
+
+.. image:: https://img.shields.io/pypi/v/biotdg.svg
+  :target: https://pypi.org/project/biotdg/
+  :alt:
+
+.. image:: https://img.shields.io/conda/v/bioconda/biotdg.svg
+  :target: http://bioconda.github.io/recipes/biotdg/README.html
+  :alt:
+
+.. image:: https://img.shields.io/pypi/pyversions/biotdg.svg
+  :target: https://pypi.org/project/biotdg/
+  :alt:
+
+.. image:: https://img.shields.io/pypi/l/biotdg.svg
+  :target: https://github.com/biowdl/biotdg/blob/master/LICENSE
+  :alt:
+
+.. image:: https://travis-ci.org/biowdl/biotdg.svg?branch=develop
+  :target: https://travis-ci.org/biowdl/biotdg
+  :alt:
+
+.. image:: https://codecov.io/gh/biowdl/biotdg/branch/develop/graph/badge.svg
+  :target: https://codecov.io/gh/biowdl/biotdg
+  :alt:
+
 biotdg: Bioinformatics Test Data Generator
 ==========================================
 
