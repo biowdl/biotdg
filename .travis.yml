@@ -1,5 +1,6 @@
 language: python
 install:
+  - apt install dwgsim
   - pip install tox
 dist: xenial
 python: 3.6  # Use the oldest supported version of python as default.
@@ -17,9 +18,10 @@ matrix:
       env: TOX_ENV=py37
     - python: 3.8
       env: TOX_ENV=py38
-    - python: 3.5
+    - python: 3.6
       env: TOX_ENV=py36
       install:
+        - apt install dwgsim
         - pip install codacy-coverage
         - pip install codecov
         - pip install tox
