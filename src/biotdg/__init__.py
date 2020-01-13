@@ -85,13 +85,13 @@ def sequence_with_mutations(sequence: str, mutations: List[Mutation]) -> str:
 def generate_fake_genome(sample: str,
                          reference: Path,
                          vcf_path: Path,
-                         ploidities: Dict[str, int]
+                         ploidy_dict: Dict[str, int]
                          ) -> Generator[SeqRecord, None, None]:
     mutations_dict = vcf_to_mutations(str(vcf_path), sample)
     with reference.open("rt") as reference_h:
         for seqrecord in FastaIterator(reference_h):
-            ploidity = ploidities.get(seqrecord.id, 2)
-            for allele_no in range(ploidity):
+            ploidy = ploidy_dict.get(seqrecord.id, 2)
+            for allele_no in range(ploidy):
                 # Default to empty list if no mutations were listed.
                 mutations = mutations_dict.get(seqrecord.id, {}
                                                ).get(allele_no, [])
@@ -107,8 +107,8 @@ def generate_fake_genome(sample: str,
 
 
 def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
-    if not filepath.parent.exists():
-        filepath.parent.mkdir(parents=True)
+    # Make sure output directory is present.
+    filepath.parent.mkdir(parents=True, exist_ok=True)
     with filepath.open("wt") as file_h:
         for record in seqrecords:
             file_h.write(record.format("fasta"))
@@ -144,24 +144,25 @@ def dwgsim(*args,
     subprocess.run(["dwgsim"] + list(argslist))
 
 
-def ploidity_file_to_dict(ploidity_file: Path) -> Dict[str, int]:
-    ploidity_dict = dict()
-    with ploidity_file.open("r") as file_h:
+def ploidy_file_to_dict(ploidy_file: Path) -> Dict[str, int]:
+    ploidy_dict = dict()
+    with ploidy_file.open("r") as file_h:
         for line in file_h:
-            chromosome, ploidity = line.strip().split("\t")
-            ploidity_dict[chromosome] = int(ploidity)
-    return ploidity_dict
+            chromosome, ploidy = line.strip().split("\t")
+            ploidy_dict[chromosome] = int(ploidy)
+    return ploidy_dict
 
 
 def generate_test_data(sample: str,
                        reference: Path,
                        vcf_path: Path,
-                       ploidity_file: Path,
+                       ploidy_file: Path,
                        output_dir: Path,
                        random_seed: int):
-    output_dir.mkdir(parents=True)
+    # Make sure output directory is present.
+    output_dir.mkdir(parents=True, exist_ok=True)
     generated_genome = generate_fake_genome(
-        sample, reference, vcf_path, ploidity_file_to_dict(ploidity_file))
+        sample, reference, vcf_path, ploidy_file_to_dict(ploidy_file))
 
     generated_genome_path = Path(output_dir, sample + ".fasta")
     write_fasta(generated_genome, generated_genome_path)
@@ -185,8 +186,8 @@ def argument_parser() -> argparse.ArgumentParser:
                         help="VCF file with mutations.")
     parser.add_argument("-p", "--ploidy-table", type=Path, required=True,
                         help="Tab-delimited file with two columns specifying "
-                             "the chromosome name and its ploidity. By "
-                             "default all chromosomes have a ploidity of 2")
+                             "the chromosome name and its ploidy. By "
+                             "default all chromosomes have a ploidy of 2")
     parser.add_argument("-s", "--sample-name", type=str, required=True,
                         help="name of the sample to generate. The sample must "
                              "be in the VCF file")
@@ -201,11 +202,7 @@ def main():
     generate_test_data(sample=args.sample_name,
                        reference=args.reference,
                        vcf_path=args.vcf,
-                       ploidity_file=args.ploidity_table,
+                       ploidy_file=args.ploidy_table,
                        output_dir=args.output_dir,
                        random_seed=args.random_seed
                        )
-
-
-if __name__ == "__main__":
-    main()

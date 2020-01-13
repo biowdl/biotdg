@@ -20,14 +20,15 @@
 
 import os
 import shutil
+import sys
 import tempfile
 from pathlib import Path
 
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from biotdg import (Mutation, dwgsim, generate_fake_genome,
-                    ploidity_file_to_dict, sequence_with_mutations,
+from biotdg import (Mutation, dwgsim, generate_fake_genome, generate_test_data,
+                    main, ploidy_file_to_dict, sequence_with_mutations,
                     vcf_to_mutations, write_fasta)
 
 TEST_DATA = Path(__file__).parent / Path("data")
@@ -67,11 +68,11 @@ def test_sequence_with_mutations():
 def test_generate_fake_genome():
     reference = TEST_DATA / Path("reference.fasta")
     vcf = TEST_DATA / Path("empty.vcf")
-    ploidities = {"chr1": 3, "chrX": 2, "chrY": 1}
+    ploidy_dict = {"chr1": 3, "chrX": 2, "chrY": 1}
     sequences = (generate_fake_genome("sample1",
                                       reference,
                                       vcf,
-                                      ploidities))
+                                      ploidy_dict))
     ids_and_seqs = [(record.id, str(record.seq)) for record in sequences]
     assert ids_and_seqs == [
         ("chr1_0", "GATTACAGATTACAGATTACA"),
@@ -86,11 +87,11 @@ def test_generate_fake_genome():
 def test_generate_fake_genome_with_mutations():
     reference = TEST_DATA / Path("reference.fasta")
     vcf = TEST_DATA / Path("sample1.vcf")
-    ploidities = {"chr1": 3, "chrX": 2, "chrY": 1}
+    ploidy_dict = {"chr1": 3, "chrX": 2, "chrY": 1}
     sequences = (generate_fake_genome("sample1",
                                       reference,
                                       vcf,
-                                      ploidities))
+                                      ploidy_dict))
     ids_and_seqs = [(record.id, str(record.seq)) for record in sequences]
     assert ids_and_seqs == [
         ("chr1_0", "GATAACAGATTACAGATTACA"),
@@ -139,9 +140,38 @@ def test_dwgsim():
 
 
 def test_ploidy_file_to_dict():
-    ploidity_file = TEST_DATA / Path("ploidity_file.tsv")
-    assert ploidity_file_to_dict(ploidity_file) == {
+    ploidy_file = TEST_DATA / Path("ploidy_file.tsv")
+    assert ploidy_file_to_dict(ploidy_file) == {
         "chr1": 3,
         "chrX": 2,
         "chrY": 1
     }
+
+
+def test_generate_test_data():
+    reference = TEST_DATA / Path("reference.fasta")
+    vcf = TEST_DATA / Path("sample1.vcf")
+    ploidy_file = TEST_DATA / Path("ploidy_file.tsv")
+    output_dir = Path(tempfile.mkdtemp())
+    generate_test_data(sample="sample1",
+                       reference=reference,
+                       ploidy_file=ploidy_file,
+                       vcf_path=vcf,
+                       random_seed=17,
+                       output_dir=output_dir)
+    assert (output_dir / Path("sample1.fasta")).exists()
+    shutil.rmtree(output_dir)
+
+
+def test_main():
+    output_dir = Path(tempfile.mkdtemp())
+    sys.argv = ["biotdg",
+                "-r", str(TEST_DATA / Path("reference.fasta")),
+                "--vcf", str(TEST_DATA / Path("sample1.vcf")),
+                "-p", str(TEST_DATA / Path("ploidy_file.tsv")),
+                "-s", "sample1",
+                "-z", "17",
+                "-o", str(output_dir)]
+    main()
+    assert Path(output_dir, "sample1.fasta").exists()
+    shutil.rmtree(output_dir)
