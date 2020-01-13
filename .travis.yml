@@ -2,6 +2,8 @@ language: python
 before_install:
   - sudo apt update
   - sudo apt install dwgsim
+    # Install stuff for compiling cyvcf3
+  - sudo apt install libssl-dev zlib1g-dev libcurl4-openssl-dev libbz2-dev liblzma-dev
   - pip install tox
   - pip install cython
 dist: xenial
