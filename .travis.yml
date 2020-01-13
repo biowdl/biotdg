@@ -1,5 +1,6 @@
 language: python
-install:
+before_install:
+  - sudo apt update
   - sudo apt install dwgsim
   - pip install tox
 dist: xenial
@@ -21,10 +22,7 @@ matrix:
     - python: 3.6
       env: TOX_ENV=py36
       install:
-        - sudo apt install dwgsim
-        - pip install codacy-coverage
         - pip install codecov
-        - pip install tox
       after_success:
         # Correct coverage xml for coverage services.
         - >
