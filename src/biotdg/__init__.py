@@ -199,6 +199,12 @@ def argument_parser() -> argparse.ArgumentParser:
                              "be in the VCF file")
     parser.add_argument("-z", "--random-seed", type=int, default=1,
                         help="random seed for dwgsim (default: 1)")
+    parser.add_argument("-l", "--read-length", type=int, default=150,
+                        help="read length to be used by dwgsim")
+    parser.add_argument("-C", "--coverage", type=float, default=50,
+                        help="Average coverage for the generated reads. NOTE: "
+                             "This is multiplied by the ploidy of the "
+                             "chromosome.")
     parser.add_argument("-o", "--output-dir", type=Path)
     return parser
 
