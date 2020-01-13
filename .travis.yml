@@ -18,10 +18,6 @@ matrix:
 
     # UNIT TESTS
     # On most recent versions of python.
-    - python: 3.7
-      env: TOX_ENV=py37
-    - python: 3.8
-      env: TOX_ENV=py38
     - python: 3.6
       env: TOX_ENV=py36
       install:
@@ -33,3 +29,7 @@ matrix:
           pkg_path=$(find .tox/py*/lib/python*/site-packages/biotdg -maxdepth 0 -type d);
           sed -i "s:${pkg_path}:src/biotdg:g" coverage.xml'
         - codecov -v  # -v to make sure coverage upload works.
+
+    - python: 3.7
+      env: TOX_ENV=py37
+

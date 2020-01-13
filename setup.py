@@ -44,10 +44,11 @@ setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
-        "Programming Language :: Python :: 3.8",
         "License :: OSI Approved :: MIT License",
     ],
-    python_requires=">=3.6",  # Because of NamedTuple class constructors
+    # >=3.6 Because of NamedTuple class constructors
+    # <=3.8 Because cyvcf2 does not (yet) compile well for 3.8
+    python_requires=">=3.6,<3.8",
     install_requires=[
         "biopython",
         "cyvcf2",
