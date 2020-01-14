@@ -31,6 +31,9 @@ import cyvcf2
 
 
 class Mutation(NamedTuple):
+    """
+    A class that represents a mutation. Start and end are 0-based indexes.
+    """
     start: int
     end: int
     sequence: str
@@ -38,6 +41,15 @@ class Mutation(NamedTuple):
 
 def vcf_to_mutations(vcf_path: str, sample: str
                      ) -> Dict[str, Dict[int, List[Mutation]]]:
+    """
+    Reads a VCF and translates it to a Dict[contig, Dict[chromosome_number,
+    List[Mutation]]]. Where contig can be "chr1" for example. Chromosome_number
+    can be any number of 0 or higher depending on the ploidy. If the ploidy is
+    2 there will be chromosome numbers 0 and 1.
+    :param vcf_path:
+    :param sample:
+    :return:
+    """
     mutations_dict: Dict[str, Dict[int, List[Mutation]]] = {}
     vcf = cyvcf2.VCFReader(vcf_path)
     try:
