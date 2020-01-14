@@ -9,6 +9,7 @@ Changelog
 
 0.1.0-dev
 ---------
-+ Added documentation
-+ Added testing functionality
-+ Created biotdg tool
++ Added options to influence dwgsim read creation.
++ Added documentation.
++ Added testing functionality.
++ Created biotdg tool.
