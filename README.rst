@@ -175,3 +175,7 @@ Known limitations
 + Mutations are always generated in a phased manner. This was easier to
   implement than an unphased manner. It is also more transparent. Some extra
   work will be required to handle unphased generation of mutations.
++ ``biotdg`` is only tested with SNPs. Indels and other variant types were not
+  tested.
+
+.. TODO: Test with indels.
