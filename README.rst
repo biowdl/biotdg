@@ -124,17 +124,6 @@ and the following vcf:
     chrX	2	.	G	T	.	.	.	GT	0/0
     chrY	4	.	A	C	.	.	.	GT	1
 
-        ##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
-    ##contig=<ID=chr1,length=21>
-    ##contig=<ID=chrX,length=12>
-    ##contig=<ID=chrY,length=6>
-    #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	sample1
-    chr1	4	.	T	A,C,G	.	.	.	GT	1/2/3
-    chr1	7	.	A	T	.	.	.	GT	0/1/0
-    chrX	1	.	A	T	.	.	.	GT	0/1
-    chrX	2	.	G	T	.	.	.	GT	0/0
-    chrY	4	.	A	C	.	.	.	GT	1
-
 A "true genome" for sample1 looks like this:
 
 .. code-block:: text
