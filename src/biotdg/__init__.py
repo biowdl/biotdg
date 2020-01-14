@@ -46,9 +46,10 @@ def vcf_to_mutations(vcf_path: str, sample: str
     List[Mutation]]]. Where contig can be "chr1" for example. Chromosome_number
     can be any number of 0 or higher depending on the ploidy. If the ploidy is
     2 there will be chromosome numbers 0 and 1.
-    :param vcf_path:
-    :param sample:
-    :return:
+    :param vcf_path: String that represents the path to the VCF
+    :param sample: Which sample in the VCF should be used.
+    :return: A dictionary of contigs with dictionaries of chromosomes that have
+    lists of mutations.
     """
     mutations_dict: Dict[str, Dict[int, List[Mutation]]] = {}
     vcf = cyvcf2.VCFReader(vcf_path)
@@ -65,7 +66,6 @@ def vcf_to_mutations(vcf_path: str, sample: str
             genotype_indexes = record.genotypes[0][:-1]
             if contig not in mutations_dict.keys():
                 mutations_dict[contig] = {}
-            # Get all the genotypes without the boolean for phasing
             for allele_no, genotype_idx in enumerate(genotype_indexes):
                 mutation = Mutation(start, end, genotypes[genotype_idx])
                 try:
@@ -79,13 +79,20 @@ def vcf_to_mutations(vcf_path: str, sample: str
 
 
 def sequence_with_mutations(sequence: str, mutations: List[Mutation]) -> str:
-    # Sort mutations by position
+    """
+    Mutate a sequence with provided list of mutations.
+    :param sequence: Any string
+    :param mutations: A list of mutations (that consist of start, end and
+    sequence
+    :return: The mutated sequence.
+    """
+    # Sort mutations by start position
     mutations.sort()
     new_sequence = []
     start = 0
 
-    # This implementation is wrong for overlapping mutations.
-    # TODO: Make sure this is documented
+    # This implementation is wrong for overlapping mutations. But that should
+    # not be a problem in test data.
     for mutation in mutations:
         new_sequence.append(sequence[start: mutation.start])
         new_sequence.append(mutation.sequence)
@@ -99,6 +106,15 @@ def generate_fake_genome(sample: str,
                          vcf_path: Path,
                          ploidy_dict: Dict[str, int]
                          ) -> Generator[SeqRecord, None, None]:
+    """
+    Generate a fake genome given a VCF, a reference, and a ploidy dict. A
+    fasta record for each chromosome will be created.
+    :param sample: The name in the sample of the VCF to use
+    :param reference: The reference fasta file to use
+    :param vcf_path: The path to the VCF
+    :param ploidy_dict: A dictionary containing the ploidies for each contig.
+    :return: A Generator that creates the chromosomes one by one.
+    """
     mutations_dict = vcf_to_mutations(str(vcf_path), sample)
     with reference.open("rt") as reference_h:
         for seqrecord in FastaIterator(reference_h):
@@ -119,6 +135,12 @@ def generate_fake_genome(sample: str,
 
 
 def write_fasta(seqrecords: Iterable[SeqRecord], filepath: Path):
+    """
+    Write sequence records to a file.
+    :param seqrecords: An iterable of biopython SeqRecords to be written.
+    :param filepath: Path to the output file.
+    :return: The filepath.
+    """
     # Make sure output directory is present.
     filepath.parent.mkdir(parents=True, exist_ok=True)
     with filepath.open("wt") as file_h:
@@ -139,6 +161,10 @@ def dwgsim(*args,
            probability_random_dna_read: Optional[float] = None,
            maximum_n_number: Optional[int] = None,
            random_seed: Optional[int] = None):
+    """
+    A wrapper for dwgsim. Args will be directly passed to dwgsim. Kwargs can
+    be directly translated to dwgsim arguments.
+    """
     argslist = list(args)
     if per_base_error_rate_read1 is not None:
         argslist.extend(["-e", str(per_base_error_rate_read1)])
@@ -163,6 +189,11 @@ def dwgsim(*args,
 
 
 def ploidy_file_to_dict(ploidy_file: Path) -> Dict[str, int]:
+    """
+    Generates a dictionary from a ploidy tsv file
+    :param ploidy_file:
+    :return: A dictionary of contigs and their ploidy
+    """
     ploidy_dict = dict()
     with ploidy_file.open("r") as file_h:
         for line in file_h:
@@ -182,6 +213,21 @@ def generate_test_data(sample: str,
                        read1_error_rate: Optional[str] = None,
                        read2_error_rate: Optional[str] = None,
                        maximum_n_number: Optional[int] = None):
+    """
+    Generates test data for the given sample
+    :param sample: The sample nam in the vcf
+    :param reference: Path to the reference fasta file.
+    :param vcf_path: Path to the vcf.
+    :param ploidy_file: Path to the ploidy tsv file.
+    :param output_dir: Output directory
+    :param random_seed: Dwgsim random seed
+    :param read_length: Dwgsim read length
+    :param coverage: Dwgsim coverage
+    :param read1_error_rate: Dwgsim per base error rate for the first read.
+    :param read2_error_rate: Dwgsim per base error rate for the second read.
+    :param maximum_n_number: Dwgsim maximum N number per read.
+    :return: None
+    """
     # Make sure output directory is present.
     output_dir.mkdir(parents=True, exist_ok=True)
     generated_genome = generate_fake_genome(
@@ -241,6 +287,10 @@ def argument_parser() -> argparse.ArgumentParser:
 
 
 def main():
+    """
+    Argument parsing and executing the main function.
+    :return: None
+    """
     args = argument_parser().parse_args()
     generate_test_data(sample=args.sample_name,
                        reference=args.reference,
