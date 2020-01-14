@@ -1,0 +1,9 @@
+##fileformat=VCFv4.1
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##contig=<ID=chr1,length=10000>
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Approximate read depth; some reads may have been filtered">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	wgs2
+chr1	500	.	C	T	.	.	DP=10	GT	0/0
+chr1	1000	.	A	G	.	.	DP=10	GT	0/1
+chr1	1500	.	G	A	.	.	DP=10	GT	1/0
+chr1	2000	.	G	A	.	.	DP=10	GT	1/1
