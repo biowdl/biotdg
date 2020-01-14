@@ -141,6 +141,13 @@ A "true genome" for sample1 looks like this:
     >chrY_0
     AGACTC
 
+.. note::
+
+    Mutations are always generated in a phased manner. A ``_0`` chromosome
+    will receive all the genotypes in the VCF that are at index 0 (the outer
+    left one). This is true even if the variants are not described as phased
+    in the vcf.
+
 Why ``biotdg`` and not ``dwgsim``?
 ----------------------------------
 
@@ -158,10 +165,13 @@ method was not deemed sufficient for the following reasons:
   so, how does it handle it?
 
 ``biotdg`` handles the creation of the "true genome" transparently and then
-uses dwgsim to generate reads.
+uses dwgsim to generate reads. ``biotdg`` can handle genomes with mixed
+ploidies (as is the case for most species with a sex chromosome) well.
 
 Known limitations
 -----------------
 + Overlapping mutations are not handled properly. (Probably not a concern for
   generating test data.)
-
++ Mutations are always generated in a phased manner. This was easier to
+  implement than an unphased manner. It is also more transparent. Some extra
+  work will be required to handle unphased generation of mutations.
