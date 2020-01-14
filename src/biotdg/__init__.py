@@ -164,7 +164,12 @@ def generate_test_data(sample: str,
                        vcf_path: Path,
                        ploidy_file: Path,
                        output_dir: Path,
-                       random_seed: int):
+                       random_seed: Optional[int] = None,
+                       read_length: Optional[int] = None,
+                       coverage: Optional[float] = None,
+                       read1_error_rate: Optional[str] = None,
+                       read2_error_rate: Optional[str] = None,
+                       maximum_n_number: Optional[int] = None):
     # Make sure output directory is present.
     output_dir.mkdir(parents=True, exist_ok=True)
     generated_genome = generate_fake_genome(
@@ -175,7 +180,13 @@ def generate_test_data(sample: str,
     dwgsim(in_ref_fa=str(generated_genome_path),
            out_prefix=str(Path(output_dir, sample)),
            mutation_rate=0.0,
-           random_seed=random_seed
+           random_seed=random_seed,
+           length_read1=read_length,
+           length_read2=read_length,
+           maximum_n_number=maximum_n_number,
+           mean_coverage=coverage,
+           per_base_error_rate_read1=read1_error_rate,
+           per_base_error_rate_read2=read2_error_rate
            )
 
 
@@ -205,6 +216,14 @@ def argument_parser() -> argparse.ArgumentParser:
                         help="Average coverage for the generated reads. NOTE: "
                              "This is multiplied by the ploidy of the "
                              "chromosome.")
+    parser.add_argument("-e", "--read1-error-rate", type=str,
+                        help="Same as -e flag in dwgsim. per base/color/flow "
+                             "error rate of the first read.")
+    parser.add_argument("-E", "--read2-error-rate", type=str,
+                        help="Same as -E flag in dwgsim. per base/color/flow "
+                             "error rate of the second read.")
+    parser.add_argument("-n", "--maximum-n-number", type=int,
+                        help="Maximum number of Ns allowed in a given read.")
     parser.add_argument("-o", "--output-dir", type=Path)
     return parser
 
@@ -216,5 +235,10 @@ def main():
                        vcf_path=args.vcf,
                        ploidy_file=args.ploidy_table,
                        output_dir=args.output_dir,
-                       random_seed=args.random_seed
+                       random_seed=args.random_seed,
+                       read_length=args.read_length,
+                       coverage=args.coverage,
+                       read1_error_rate=args.read1_error_rate,
+                       read2_error_rate=args.read2_error_rate,
+                       maximum_n_number=args.maximum_n_number
                        )
