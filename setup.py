@@ -52,6 +52,7 @@ setup(
     install_requires=[
         "biopython",
         "cyvcf2",
+        "setuptools"  # To get the version during runtime.
     ],
     entry_points={"console_scripts": [
         "biotdg = biotdg:main"]}
