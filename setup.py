@@ -26,7 +26,7 @@ LONG_DESCRIPTION = Path("README.rst").read_text()
 
 setup(
     name="biotdg",
-    version="0.1.0-dev",
+    version="0.1.0",
     description="Bioinformatics Test Data Generator",
     author="Leiden University Medical Center",
     author_email="sasc@lumc.nl",
