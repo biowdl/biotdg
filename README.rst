@@ -63,14 +63,14 @@ Usage
       -p PLOIDY_TABLE, --ploidy-table PLOIDY_TABLE
                             Tab-delimited file with two columns specifying the
                             chromosome name and its ploidy. By default all
-                            chromosomes have a ploidy of 2
+                            chromosomes have a ploidy of 2.
       -s SAMPLE_NAME, --sample-name SAMPLE_NAME
-                            name of the sample to generate. The sample must be in
-                            the VCF file
+                            Name of the sample to generate. The sample must be in
+                            the VCF file.
       -z RANDOM_SEED, --random-seed RANDOM_SEED
-                            random seed for dwgsim (default: 1)
+                            Random seed for dwgsim (default: 1).
       -l READ_LENGTH, --read-length READ_LENGTH
-                            read length to be used by dwgsim
+                            Read length to be used by dwgsim.
       -C COVERAGE, --coverage COVERAGE
                             Average coverage for the generated reads. NOTE: This
                             is multiplied by the ploidy of the chromosome.

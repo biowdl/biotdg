@@ -262,14 +262,14 @@ def argument_parser() -> argparse.ArgumentParser:
     parser.add_argument("-p", "--ploidy-table", type=Path, required=True,
                         help="Tab-delimited file with two columns specifying "
                              "the chromosome name and its ploidy. By "
-                             "default all chromosomes have a ploidy of 2")
+                             "default all chromosomes have a ploidy of 2.")
     parser.add_argument("-s", "--sample-name", type=str, required=True,
-                        help="name of the sample to generate. The sample must "
-                             "be in the VCF file")
+                        help="Name of the sample to generate. The sample must "
+                             "be in the VCF file.")
     parser.add_argument("-z", "--random-seed", type=int, default=1,
-                        help="random seed for dwgsim (default: 1)")
+                        help="Random seed for dwgsim (default: 1).")
     parser.add_argument("-l", "--read-length", type=int, default=150,
-                        help="read length to be used by dwgsim")
+                        help="Read length to be used by dwgsim.")
     parser.add_argument("-C", "--coverage", type=float, default=50,
                         help="Average coverage for the generated reads. NOTE: "
                              "This is multiplied by the ploidy of the "
