@@ -30,12 +30,12 @@ biotdg: Bioinformatics Test Data Generator
 ``biotdg`` can generate mutations based on vcf files for genomes where the
 chromosomes have different ploidy. It was made to create test genomes for
 pipelines that correctly handle the ploidy of sex chromosomes. It can also be
-used to create test data for pipelines that handle triploid species such as
-banana, or for pipelines that discover chromosome inbalances such as
+used to create test data for pipelines that handle triploid species, such as
+banana, or for pipelines that discover chromosome imbalances, such as
 trisomy-21 (Down syndrome) and XXY males (Klinefelter syndrome).
 
 ``biotdg`` uses a reference genome, a ploidy table and a vcf file to create a
-"true genome" for a sample. For example if the ploidy table states that
+"true genome" for a sample. For example, if the ploidy table states that
 ``chr21`` has a ploidy of 3 then the "true genome" will have three copies
 of ``chr21``. Each ``chr21`` copy will have its own mutations based on the
 vcf file.
