@@ -48,8 +48,8 @@ Usage
 
 .. code-block:: text
 
-    usage: biotdg [-h] -r REFERENCE --vcf VCF -p PLOIDY_TABLE -s SAMPLE_NAME
-                  [-z RANDOM_SEED] [-l READ_LENGTH] [-C COVERAGE]
+    usage: biotdg [-h] [--version] -r REFERENCE --vcf VCF -p PLOIDY_TABLE -s
+                  SAMPLE_NAME [-z RANDOM_SEED] [-l READ_LENGTH] [-C COVERAGE]
                   [-e READ1_ERROR_RATE] [-E READ2_ERROR_RATE]
                   [-n MAXIMUM_N_NUMBER] [-o OUTPUT_DIR]
 
@@ -57,6 +57,7 @@ Usage
 
     optional arguments:
       -h, --help            show this help message and exit
+      --version             show program's version number and exit
       -r REFERENCE, --reference REFERENCE
                             Reference genome for the sample.
       --vcf VCF             VCF file with mutations.

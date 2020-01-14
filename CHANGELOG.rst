@@ -9,6 +9,7 @@ Changelog
 
 0.1.0
 ---------
++ Add ``--version`` flag to help with reproducibility.
 + Added options to influence dwgsim read creation.
 + Added documentation.
 + Added testing functionality.

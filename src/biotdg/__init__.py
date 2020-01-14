@@ -29,6 +29,13 @@ from Bio.SeqRecord import SeqRecord
 
 import cyvcf2
 
+import pkg_resources
+
+
+def get_version() -> str:
+    distribution = pkg_resources.get_distribution(__package__)
+    return distribution.version
+
 
 class Mutation(NamedTuple):
     """
@@ -255,6 +262,8 @@ def argument_parser() -> argparse.ArgumentParser:
     """
     parser = argparse.ArgumentParser(
         description="Bioinformatics Test Data Generator")
+    parser.add_argument("--version", action="version",
+                        version=get_version())
     parser.add_argument("-r", "--reference", type=Path, required=True,
                         help="Reference genome for the sample.")
     parser.add_argument("--vcf", required=True,
