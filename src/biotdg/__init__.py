@@ -291,7 +291,7 @@ def argument_parser() -> argparse.ArgumentParser:
                              "error rate of the second read.")
     parser.add_argument("-n", "--maximum-n-number", type=int,
                         help="Maximum number of Ns allowed in a given read.")
-    parser.add_argument("-o", "--output-dir", type=Path)
+    parser.add_argument("-o", "--output-dir", type=Path, default=".")
     return parser
 
 
