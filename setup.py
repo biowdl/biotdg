@@ -47,8 +47,7 @@ setup(
         "License :: OSI Approved :: MIT License",
     ],
     # >=3.6 Because of NamedTuple class constructors
-    # <=3.8 Because cyvcf2 does not (yet) compile well for 3.8
-    python_requires=">=3.6,<3.8",
+    python_requires=">=3.6",
     install_requires=[
         "biopython",
         "cyvcf2",

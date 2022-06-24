@@ -29,7 +29,7 @@ from Bio.SeqRecord import SeqRecord
 
 import cyvcf2
 
-import pkg_resources
+import pkg_resources  # type: ignore
 
 
 def get_version() -> str:
@@ -135,7 +135,7 @@ def generate_fake_genome(sample: str,
                     mutations=mutations)
                 new_id = seqrecord.id + "_" + str(allele_no)
                 yield SeqRecord(
-                    Seq(new_sequence, seqrecord.seq.alphabet),
+                    Seq(new_sequence),
                     id=new_id,
                     name=new_id,
                     description=new_id)
