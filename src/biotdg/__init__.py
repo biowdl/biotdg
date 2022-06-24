@@ -135,7 +135,7 @@ def generate_fake_genome(sample: str,
                     mutations=mutations)
                 new_id = seqrecord.id + "_" + str(allele_no)
                 yield SeqRecord(
-                    Seq(new_sequence, seqrecord.seq.alphabet),
+                    Seq(new_sequence),
                     id=new_id,
                     name=new_id,
                     description=new_id)
