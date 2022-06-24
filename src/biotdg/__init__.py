@@ -212,8 +212,8 @@ def ploidy_file_to_dict(ploidy_file: Path) -> Dict[str, int]:
 def generate_test_data(sample: str,
                        reference: Path,
                        vcf_path: Path,
-                       ploidy_file: Path,
-                       output_dir: Path,
+                       output_dir: Path = Path("."),
+                       ploidy_file: Path = None,
                        random_seed: Optional[int] = None,
                        read_length: Optional[int] = None,
                        coverage: Optional[float] = None,
@@ -237,8 +237,9 @@ def generate_test_data(sample: str,
     """
     # Make sure output directory is present.
     output_dir.mkdir(parents=True, exist_ok=True)
+    ploidy_dict = {} if ploidy_file is None else ploidy_file_to_dict(ploidy_file)
     generated_genome = generate_fake_genome(
-        sample, reference, vcf_path, ploidy_file_to_dict(ploidy_file))
+        sample, reference, vcf_path, ploidy_dict)
 
     generated_genome_path = Path(output_dir, sample + ".fasta")
     write_fasta(generated_genome, generated_genome_path)
@@ -268,7 +269,7 @@ def argument_parser() -> argparse.ArgumentParser:
                         help="Reference genome for the sample.")
     parser.add_argument("--vcf", required=True,
                         help="VCF file with mutations.")
-    parser.add_argument("-p", "--ploidy-table", type=Path, required=True,
+    parser.add_argument("-p", "--ploidy-table", type=Path,
                         help="Tab-delimited file with two columns specifying "
                              "the chromosome name and its ploidy. By "
                              "default all chromosomes have a ploidy of 2.")
