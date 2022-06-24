@@ -29,7 +29,7 @@ from Bio.SeqRecord import SeqRecord
 
 import cyvcf2
 
-import pkg_resources
+import pkg_resources  # type: ignore
 
 
 def get_version() -> str:
